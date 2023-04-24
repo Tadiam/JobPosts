@@ -36,10 +36,13 @@ def trainModel(model,df):
 
 
     resume_encodings = model.encode(train_texts)
+    print("train done")
     job_encodings=model.encode(descriptions)
+    print("job done")
     #train_labels=[1,1,0,0,1]
+    print("boutta loop")
     train_labels = [1 for x in range(len(df))]
-    
+    print("HIIIIII")
     train_dataset = TensorDataset(torch.tensor(resume_encodings),
                         torch.tensor(job_encodings),
                         torch.tensor(train_labels))
@@ -61,9 +64,12 @@ def trainModel(model,df):
 def findClosestMatch(resume_text,df,model):
    
     trainModel(model,df)
+    print("hereeeee")
     vector1=model.encode(resume_text)
     count=0
     s=0
+    print("going here")
+    
     for x in df['job_description']:
        
         vector2 = model.encode(str(x))
@@ -72,6 +78,8 @@ def findClosestMatch(resume_text,df,model):
             s=score
             index=count
         count+=1
+        if count ==10000:
+            break
     
     print(df.iloc[index]['job_description'])
     return(score)
@@ -81,5 +89,6 @@ model = SentenceTransformer('bert-base-nli-mean-tokens')
 jobs_df = pd.read_csv('../data/seek_australia.csv')
 resume_text= "Ensure the stability, confidentiality, integrity & availability of services Grow & develop capabilities & efficiencies of the services across the CSIRO enterprise Ongoing professional & development opportunities within a friendly, supportive team Our Information Management and Technology (IMT) team are looking for an IT Directory Services & Email Support Analyst who has experience supporting the following technologies at an Enterprise scale: Active Directory, DHCP/DNS on Windows and Linux, Exchange.Â  You will be required to work with immediate team members as well as geographically and technically distributed teams across the architecture model to grow and develop capabilities and efficiencies of the services across the CSIRO enterprise.Â  You will have responsibility for: the completion of complex technical problems, undertaking development, implementation or standardisation of procedures and techniques, and input to solutions design. To be eligible for this position you will hold a Degree in information technology and/or have equivalent work experience. You will have demonstrated experience in supporting the following technologies at an enterprise scale: Active Directory; DHCP/DNS on Windows and Linux; Exchange.Â  Experience contributing to the implementation and administration of enterprise IT solutions in a converged IT environment is also required. This is a security assessed position. To be eligible for this position you will currently hold, or will have the ability to obtain, an Australian Government security clearance level of Negative Vetting 1 (SECRET). Location:Â Â Â  Clayton, VIC; Yarralumla, ACT or North Ryde,NSW Salary:Â Â Â Â Â Â Â Â AU $61K to AU $78K plus up to 15.4% superannuation Tenure:Â Â Â Â Â Â  Indefinite Ref No.:Â Â Â Â Â Â 56625 Before applying please view the full position details and selection criteria here:Â Position Details About CSIRO We imagine. We collaborate. "
 #trainModel(model)
+print("here")
 print(findClosestMatch(resume_text,jobs_df,model))
 
