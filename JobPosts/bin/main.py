@@ -47,7 +47,7 @@ model.createJobList()
 
 
 
-model=Job_Model()
+
 df = pd.read_csv("../../data/datascience.csv")
 model.df=df
 model.industry="Data Science"
@@ -93,6 +93,9 @@ df = pd.read_csv("../../data/softwaredeveloper.csv")
 model.df=df
 model.industry="Software Developer"
 model.createJobList()
+
+model.trainModel()
+
 model.findClosestMatch(text)
 
 for x in model.jobs:

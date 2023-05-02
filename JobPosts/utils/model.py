@@ -25,6 +25,7 @@ class Job:
         self.score=0
         self.paraphrase=""
         self.industry=industry
+        
 class Job_Model:
     def __init__(self,  token='bert-base-nli-mean-tokens', ):
         
@@ -34,6 +35,9 @@ class Job_Model:
         #self.train_df, self.test_df = train_test_split(self.jobs_df, test_size=.2)
         self.jobs=[]
         self.industry=""
+        self.train_jobs=[]
+        self.test_jobs=[]
+        self.length=0
     def __str__(self):
         return f'Job Model for data set with path {self.path}'
     def __repr__(self):
@@ -44,63 +48,110 @@ class Job_Model:
             new_job=Job(description=x,index=count,industry=self.industry)
             count+=1
             self.jobs.append(new_job)
-    
-    def trainModel(self,text):        
+        self.seperateData()
+        self.length=len(self.jobs)
+       
+    def seperateData(self):
+       
+        current_industry=[self.jobs[x] for x in range(self.length-1,len(self.jobs))]
+       
+       
+        this_industry_train=[]
+        this_industry_test=[]
+        stopper=len(current_industry)*.8
+       
+        y=0
+        for x in current_industry:
+            if y<=stopper:
+                this_industry_train.append(x)
+            else:
+                this_industry_test.append(x)
+            y+=1
+        
+        self.train_jobs.append(this_industry_train)
+       
+        self.test_jobs.append(this_industry_test)
+       
+    def trainModel(self):        
         # Fine-tune BERT model on dataset of resumes and job descriptions
         #train_texts = ['Responsible for conceiving and creating technical content in a variety of media such as technical articles, white papers, blogs, videos, and eBooks.', 'Creating technical content and other media. Adept at writing papers, blogs, and online books',"chef who loves to bake and play football","a teacher who hates technology andd is passionate about bringing literature back to paper","marketer with decades of experience and loves the idea of bringing companies into the modern world with technical skills", "an artist who loves to write on paper, not adept with technology"]
-        
-        
-        train_texts = [x.description for x in self.jobs]
-        
-        train_encodings = self.model.encode(train_texts)
-        train_labels = [1 for x in range (len(self.jobs))]
-        train_dataset = TensorDataset(torch.tensor(train_encodings),
-                                    torch.tensor(train_labels))
-        train_dataloader = DataLoader(train_dataset, batch_size=16)
-
-        optimizer = torch.optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9)
-
-        self.model.train()
-        for epoch in range(3):
-            for batch in train_dataloader:
-                optimizer.zero_grad()
-                text = batch[0]
+        length=0
+        texts_against=[]
+        length=0
+        for s in self.train_jobs:
+            for u in s:
+                texts_against.append(u.description)
+                length+=1
+        for subset in self.train_jobs:
+           print("H")
+           for x in subset:
+             
+                new_array = []
+                for i in self.train_jobs:
+                    for j in i:
+                        if j.description in subset:
+                            new_array.append(1)
+                        else:
+                            new_array.append(0)
+                train_texts = [x.description for l in range(length)]
                 
-                # Ensure that text is a tensor of strings
-                if text.ndim == 0:
-                    text = torch.tensor([str(text)])
-                else:
-                    text = text[torch.tensor([isinstance(t, str) for t in text])]
-                    
-                if len(text) == 0:
-                    embeddings = None
-                else:
-                    embeddings = self.model.encode(text)
-                
-                
-                # Filter out non-string elements from batch[0] tensor
-                text_list = batch[0].tolist()
+               
+             
+                train_encodings = self.model.encode((train_texts))
+                train_set_encoding=self.model.encode(texts_against)
+                train_labels = new_array
+                print(len(train_encodings),len(train_set_encoding),len(train_labels))
+                train_dataset = TensorDataset(torch.tensor(train_encodings), torch.tensor(train_set_encoding), torch.tensor(train_labels))
 
-    # Filter out any non-string elements
-                filtered_list = [t for t in text_list if isinstance(t, str)]
 
-                # Convert filtered list back to a tensor
-                filtered_tensor = torch.tensor(filtered_list)
-                if len(filtered_tensor) > 0:
-                  
-                    loss = torch.mean(1 - cosine_similarity(embeddings, filtered_tensor))
-                    loss.backward()
-                    optimizer.step()
-                else:
-                # Compute loss using filtered tensor
-              
-                    loss = torch.mean(1 - cosine_similarity(embeddings, filtered_tensor))
-                    loss.backward()
-                    optimizer.step()
-        
+                train_dataloader = DataLoader(train_dataset, batch_size=10)
+
+                optimizer = torch.optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9)
+
+                self.model.train()
+                for num in range(3):
+                
+                    for batch in train_dataloader:
+                       
+                        optimizer.zero_grad()
+                        train_embeddings,texts_against_embeddings, label = batch
+                        train_embeddings.requires_grad = True
+                        texts_against_embeddings.requires_grad = True
+                        #label.requires_grad = True
+                           
+                        cos_sim = util.pytorch_cos_sim
+                        cosine_similarities = cos_sim(train_embeddings, texts_against_embeddings)
+                        loss = 1-torch.mean(cosine_similarities)
+                        loss.backward()
+                        optimizer.step()
+                # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+                # self.model.to(device)
+                # for epoch in range(3):
+
+                #     for batch in train_dataloader:
+                #         optimizer.zero_grad()
+
+                #         input_ids, attention_mask, texts_against_input_ids, texts_against_attention_mask, labels = batch
+                #         input_ids = input_ids.to(device)
+                #         attention_mask = attention_mask.to(device)
+                #         texts_against_input_ids = texts_against_input_ids.to(device)
+                #         texts_against_attention_mask = texts_against_attention_mask.to(device)
+                #         labels = labels.to(device)
+
+                #         train_embeddings = self.model(input_ids=input_ids, attention_mask=attention_mask)['last_hidden_state']
+                #         texts_against_embeddings = self.model(input_ids=texts_against_input_ids, attention_mask=texts_against_attention_mask)['last_hidden_state']
+
+
+                #         cos_sim = util.pytorch_cos_sim
+                #         cosine_similarities = cos_sim(train_embeddings, texts_against_embeddings)
+
+                #         loss = 1 - torch.mean(cosine_similarities)
+                #         loss.backward()
+                #         optimizer.step()
 
     #RUNS ON TEST DATA
     #def findClosestMatch(resume_text,df,model):
+    
     def findClosestMatch(self,text):
         #trainModel(model,df)
         
@@ -138,3 +189,5 @@ class Job_Model:
             count+=1
         
         self.jobs.sort(key=lambda x:x.score ,reverse=True)
+    def test(self):
+        pass
