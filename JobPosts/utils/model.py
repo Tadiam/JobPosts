@@ -84,24 +84,27 @@ class Job_Model:
                 length+=1
         for subset in self.train_jobs:
            print("H")
-           for x in subset:
-             
-                new_array = []
-                for i in self.train_jobs:
+           new_array = []
+           for i in self.train_jobs:
                     for j in i:
                         if j.description in subset:
                             new_array.append(1)
                         else:
                             new_array.append(0)
+           train_labels = new_array
+           label_tensor=torch.tensor(train_labels)
+           for x in subset:
+             
+               
                 train_texts = [x.description for l in range(length)]
                 
                
              
                 train_encodings = self.model.encode((train_texts))
                 train_set_encoding=self.model.encode(texts_against)
-                train_labels = new_array
-                print(len(train_encodings),len(train_set_encoding),len(train_labels))
-                train_dataset = TensorDataset(torch.tensor(train_encodings), torch.tensor(train_set_encoding), torch.tensor(train_labels))
+                
+                
+                train_dataset = TensorDataset(torch.tensor(train_encodings), torch.tensor(train_set_encoding), label_tensor)
 
 
                 train_dataloader = DataLoader(train_dataset, batch_size=10)
