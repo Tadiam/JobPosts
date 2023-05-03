@@ -112,48 +112,31 @@ class Job_Model:
                 optimizer = torch.optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9)
 
                 self.model.train()
-                for num in range(3):
+                for num in range(1):
                 
                     for batch in train_dataloader:
-                       
+                    
                         optimizer.zero_grad()
+                       
                         train_embeddings,texts_against_embeddings, label = batch
+                     
                         train_embeddings.requires_grad = True
                         texts_against_embeddings.requires_grad = True
-                        #label.requires_grad = True
+
+                        label=label.float()
+                        label.requires_grad = True
                            
-                        cos_sim = util.pytorch_cos_sim
-                        cosine_similarities = cos_sim(train_embeddings, texts_against_embeddings)
-                        loss = 1-torch.mean(cosine_similarities)
+                     
+                        cosine_similarities = cosine_similarity(train_embeddings.detach().cpu().numpy(), texts_against_embeddings.detach().cpu().numpy())
+                        
+                        cosine_similarities = torch.from_numpy(cosine_similarities)
+                
+                        loss = torch.mean((cosine_similarities - label)**2)
+                      
                         loss.backward()
+                        
                         optimizer.step()
-                # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-                # self.model.to(device)
-                # for epoch in range(3):
-
-                #     for batch in train_dataloader:
-                #         optimizer.zero_grad()
-
-                #         input_ids, attention_mask, texts_against_input_ids, texts_against_attention_mask, labels = batch
-                #         input_ids = input_ids.to(device)
-                #         attention_mask = attention_mask.to(device)
-                #         texts_against_input_ids = texts_against_input_ids.to(device)
-                #         texts_against_attention_mask = texts_against_attention_mask.to(device)
-                #         labels = labels.to(device)
-
-                #         train_embeddings = self.model(input_ids=input_ids, attention_mask=attention_mask)['last_hidden_state']
-                #         texts_against_embeddings = self.model(input_ids=texts_against_input_ids, attention_mask=texts_against_attention_mask)['last_hidden_state']
-
-
-                #         cos_sim = util.pytorch_cos_sim
-                #         cosine_similarities = cos_sim(train_embeddings, texts_against_embeddings)
-
-                #         loss = 1 - torch.mean(cosine_similarities)
-                #         loss.backward()
-                #         optimizer.step()
-
-    #RUNS ON TEST DATA
-    #def findClosestMatch(resume_text,df,model):
+                
     
     def findClosestMatch(self,text):
         #trainModel(model,df)
