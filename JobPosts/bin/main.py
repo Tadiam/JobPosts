@@ -48,10 +48,6 @@ model.createJobList()
 
 
 
-df = pd.read_csv("../../data/datascience.csv")
-model.df=df
-model.industry="Data Science"
-model.createJobList()
 
 
 
@@ -94,43 +90,50 @@ model.df=df
 model.industry="Software Developer"
 model.createJobList()
 
-model.trainModel()
+df = pd.read_csv("../../data/datascience.csv")
+model.df=df
+model.industry="Data Science"
+model.createJobList()
 
-model.findClosestMatch(text)
 
-for x in model.jobs:
-    master_list.append(x)
+model.test()
+#model.trainModel()
 
-master_list.sort(key=lambda x:x.score ,reverse=True)
-count=0
-for x in master_list:
+# model.findClosestMatch(text)
 
-    print(x.score,x.index,x.industry,x.description)
+# for x in model.jobs:
+#     master_list.append(x)
+
+# master_list.sort(key=lambda x:x.score ,reverse=True)
+# count=0
+# for x in master_list:
+
+#     print(x.score,x.index,x.industry,x.description)
    
-count=0
-predictions=[]
-for x in master_list:
-    #print(x.industry)
-    if(count!=31):
+# count=0
+# predictions=[]
+# for x in master_list:
+#     #print(x.industry)
+#     if(count!=31):
         
-        if x.industry==target_industry:
-            print(x.description,x.score)
+#         if x.industry==target_industry:
+           
           
-            predictions.append(1)
-        else:
-            predictions.append(0)
-    else:
-        if x.industry==target_industry:
-            print(x.description,x.score)
+#             predictions.append(1)
+#         else:
+#             predictions.append(0)
+#     else:
+#         if x.industry==target_industry:
+#             print(x.description,x.score)
   
-            predictions.append(0)
-        else:
-            predictions.append(1)
-    count+=1
+#             predictions.append(0)
+#         else:
+#             predictions.append(1)
+#     count+=1
 
-#print(predictions)
-e=Evaluate(preds=predictions)
-print(e.precision())
-print(e.recall())
+# #print(predictions)
+# e=Evaluate(preds=predictions)
+# print(e.precision())
+# print(e.recall())
 
-e.confusion_matrix()
+#e.confusion_matrix()
