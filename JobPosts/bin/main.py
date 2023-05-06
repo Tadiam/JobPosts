@@ -10,14 +10,16 @@ sys.path.append(path)
 sys.path.append(path2)
 from eval.eval import Evaluate
 from utils.model import Job, Job_Model
+import argparse
 
-
-
+parser = argparse.ArgumentParser(description="What args")
+parser.add_argument("mode")
+args=parser.parse_args()
 model = Job_Model( )
-target_industry="Financial Analyst"
+
 
 #model.trainModel()
-text="Five or more years related experience in a business intelligence, financial reporting, financial analyst, accounting analyst, public accounting, financial…"
+
 
 master_list=[]
 df = pd.read_csv("../../data/businessanalyst.csv")
@@ -96,44 +98,7 @@ model.industry="Data Science"
 model.createJobList()
 
 
-model.test()
-#model.trainModel()
-
-# model.findClosestMatch(text)
-
-# for x in model.jobs:
-#     master_list.append(x)
-
-# master_list.sort(key=lambda x:x.score ,reverse=True)
-# count=0
-# for x in master_list:
-
-#     print(x.score,x.index,x.industry,x.description)
-   
-# count=0
-# predictions=[]
-# for x in master_list:
-#     #print(x.industry)
-#     if(count!=31):
-        
-#         if x.industry==target_industry:
-           
-          
-#             predictions.append(1)
-#         else:
-#             predictions.append(0)
-#     else:
-#         if x.industry==target_industry:
-#             print(x.description,x.score)
-  
-#             predictions.append(0)
-#         else:
-#             predictions.append(1)
-#     count+=1
-
-# #print(predictions)
-# e=Evaluate(preds=predictions)
-# print(e.precision())
-# print(e.recall())
-
-#e.confusion_matrix()
+if(args.mode=="default"):
+    model.test()
+else:
+    model.findClosestMatch(args.mode)
