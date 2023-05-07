@@ -25,3 +25,6 @@ Running an exact job description to find the most relevant:
 <img width="676" alt="Screen Shot 2023-05-06 at 7 36 06 PM" src="https://user-images.githubusercontent.com/91433035/236650492-034b84b9-c22b-4095-9343-329341a2258e.png">
 
 
+To run our Pytests navigate to the test directory and run
+
+pytest tests.py
