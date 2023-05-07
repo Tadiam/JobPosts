@@ -13,7 +13,8 @@ from utils.model import Job, Job_Model
 import argparse
 
 parser = argparse.ArgumentParser(description="What args")
-parser.add_argument("mode")
+parser.add_argument('--sentence',type=str)
+parser.add_argument('--n',type=int)
 args=parser.parse_args()
 model = Job_Model( )
 
@@ -98,7 +99,10 @@ model.industry="Data Science"
 model.createJobList()
 
 
-if(args.mode=="default"):
+if(args.sentence=="default"):
     model.test()
 else:
-    model.findClosestMatch(args.mode)
+    (model.findClosestMatch(args.sentence))
+    for x in range(0,args.n):
+        print(model.jobs[x].industry,model.jobs[x].description)
+
