@@ -19,8 +19,6 @@ args=parser.parse_args()
 model = Job_Model( )
 
 
-#model.trainModel()
-
 
 master_list=[]
 df = pd.read_csv("../../data/businessanalyst.csv")
@@ -97,7 +95,7 @@ df = pd.read_csv("../../data/datascience.csv")
 model.df=df
 model.industry="Data Science"
 model.createJobList()
-
+model.trainModel()
 
 if(args.sentence=="default"):
     model.test()
