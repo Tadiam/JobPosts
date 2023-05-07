@@ -25,6 +25,10 @@ def test_top_match():
     model.findClosestMatch(model.jobs[0].description)
     assert(model.jobs[0].description==toFind)
 
+    toFind=model.jobs[1].description
+    model.findClosestMatch(model.jobs[1].description)
+    assert(model.jobs[1].description==toFind)
+
 def test_Precision():
     preds=[1 for x in range (40)]
     real=[1 for x in range(40)]

@@ -1,4 +1,5 @@
 
+
 from transformers import  BertTokenizer#,# AdamW
 from torch.utils.data import DataLoader, TensorDataset
 import pandas as pd
@@ -13,10 +14,12 @@ from sklearn import metrics
 from sentence_transformers import SentenceTransformer,util
 
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.model_selection import train_test_split
-import nltk
-from nltk.corpus import wordnet as wn
 
+import os 
+import sys 
+path2 = os.path.abspath("../../JobPosts/")
+sys.path.append(path2)
+from eval.eval import Evaluate
 
 class Job:
     def __init__(self,description,index,industry):
@@ -28,7 +31,7 @@ class Job:
         
 class Job_Model:
     def __init__(self,  token='bert-base-nli-mean-tokens', ):
-        
+
         self.model = SentenceTransformer(token)
         df=""
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
@@ -75,7 +78,7 @@ class Job_Model:
     def trainModel(self):        
         # Fine-tune BERT model on dataset of resumes and job descriptions
         #train_texts = ['Responsible for conceiving and creating technical content in a variety of media such as technical articles, white papers, blogs, videos, and eBooks.', 'Creating technical content and other media. Adept at writing papers, blogs, and online books',"chef who loves to bake and play football","a teacher who hates technology andd is passionate about bringing literature back to paper","marketer with decades of experience and loves the idea of bringing companies into the modern world with technical skills", "an artist who loves to write on paper, not adept with technology"]
-        logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.INFO)
+        logging.basicConfig(filename='train.log', encoding='utf-8', level=logging.INFO)
         length=0
         texts_against=[]
         length=0
@@ -84,7 +87,7 @@ class Job_Model:
                 texts_against.append(u.description)
                 length+=1
         for subset in self.train_jobs:
-           logging.info("New job position running, this might take a while.:Q")
+          # logging.info("New job position running, this might take a while.:Q")
            new_array = []
            for i in self.train_jobs:
                     for j in i:
@@ -177,4 +180,51 @@ class Job_Model:
         
         self.jobs.sort(key=lambda x:x.score ,reverse=True)
     def test(self):
-        pass
+        #logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.INFO)
+        logging.info("Testing beginning ")
+        average_prec=0
+        average_recall=0
+        average_f1=0
+        num=0
+       
+        for subset in self.test_jobs:
+            logging.info("training a new subset is beginning")
+            for x in subset:
+                
+                num+=1
+                count=0
+                self.findClosestMatch(x.description)
+                
+               
+                target_industry=x.industry
+                preds=[]
+                
+                for y in self.jobs:
+                   
+                    if count<30:
+                        if y.industry==target_industry:
+                            preds.append(1)
+                        else:
+                            preds.append(0)
+                    else:
+                        if y.industry==target_industry:
+                            preds.append(0)
+                        else:
+                            preds.append(1)
+                    count+=1
+               
+                e=Evaluate(preds)
+                average_prec+=e.precision()
+                
+                average_recall+=e.recall()
+               
+                average_f1+=e.f1()
+              
+        logging.info("Testing ending ")
+        print("Average precision is",average_prec/num,"average recall is",average_recall/num,"average f1 is",average_f1/num)
+
+
+
+
+
+
