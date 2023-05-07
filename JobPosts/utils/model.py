@@ -167,7 +167,7 @@ class Job_Model:
         count=0
         
         for x in self.jobs:
-            vector2 = self.model.encode(str(x.description))
+          
            
             sent2_embedding = self.model.encode(x.description, convert_to_tensor=True)
             
