@@ -1,7 +1,6 @@
 from flask import Flask, request, session
 from processing import process
 
-
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config["SECRET_KEY"] = "93e78914d7b162b36641ca4ec562c86d4f14a399e2629ca218742fbc0610168e"
@@ -13,14 +12,22 @@ app.config["SECRET_KEY"] = "93e78914d7b162b36641ca4ec562c86d4f14a399e2629ca21874
 def hello_world():
     if "inputs" not in session:
         session["inputs"] = []
-        session["position_name"] = ""
-        session["job_category"] = ""
-        session["salary"] = ""
-        session["type_job"] = ""
-        session["shift_schedule"] = ""
-        session["location"] = ""
+        #session["position_name"] = ""
+        #session["job_category"] = ""
+        #session["salary"] = ""
+        #session["type_job"] = ""
+        #session["shift_schedule"] = ""
+        #session["location"] = ""
+        session["description"] = ""
     errors = ""
     if request.method == "POST":
+        try:
+            session["description"] = request.form["description"]
+            session["inputs"].append(session["description"])
+            session.modified = True
+        except:
+            errors += "<p>{!r} is invalid.</p>\n".format(request.form["position_name"])
+        '''
         try:
             session["position_name"] = request.form["position_name"]
             session["inputs"].append(session["position_name"])
@@ -62,13 +69,13 @@ def hello_world():
             session["inputs"].append(session["location"])
             session.modified = True
         except:
-            errors += "<p>{!r} is invalid.</p>\n".format(request.form["location"])
+            errors += "<p>{!r} is invalid.</p>\n".format(request.form["location"])'''
 
         if request.form["action"] == "Process Query":
             valid_query = True
-            for i in session["inputs"]:
-                if i == "":
-                    valid_query = False
+            #for i in session["inputs"]:
+                #if i == "":
+                    #valid_query = False
             if valid_query:
                 result = process(session["inputs"])
                 session["inputs"].clear()
@@ -77,7 +84,7 @@ def hello_world():
                     <html>
                         <body>
                             <p>{result}</p>
-                            <p><a href="/">Click here to calculate again</a>
+                            <p><a href="/">Click here to query again</a>
                         </body>
                     </html>
                 '''.format(result=result)
@@ -100,11 +107,37 @@ def hello_world():
         <html>
             <body>
                 {errors}
+                <p>Enter a description of your qualifications and job preferences, about 100 words, below.</p>
+                <p>Example:</p>
+                <p>Work on projects in data mining and knowledge discovery. Past experience with simulation models and visualization.</p>
+                <p>Highly motivated worker, enjoys collaborative work environments. I have my Masters in Data Science and Analytics.</p>
+                <form method="post" action=".">
+                    <p><input name="description" /></p>
+                    <p><input type="submit" name="action" value="Start over" /></p>
+                    <p><input type="submit" name="action" value="Process Query" /></p>
+                </form>
+            </body>
+        </html>
+    '''.format(errors=errors)
+
+    #return 'shiny Flash app for ling472/anly521 final project!'
+
+
+
+    '''
+    <html>
+            <body>
+                {errors}
                 <p>Enter your desired job information:</p>
                 <form method="post" action=".">
-                    <p>Position Name:</p>
-                    <p><input name="position_name" /></p>
-                    <p>Job Category:</p>
+                    //<p>Position Name:</p>
+                    <p><input name="description" /></p>
+                    <p><Enter a description of your qualifications and job preferences, about 100 words, below./></p>
+                    <p><For example:/></p>
+                    <p><Work on projects in data mining and knowledge discovery. Past experience with simulation models and visualization./></p>
+                    <p><Highly motivated worker, enjoys collaborative work environments. I have my Masters in Data Science and Analytics./></p>
+                    //<p><input name="position_name" /></p>
+                    //<p>Job Category:</p>
                     <p><input name="job_category" /></p>
                     <p>Salary Lower Bound (in 1,000s of USD):</p>
                     <p><input name="salaryL" /></p>
@@ -120,8 +153,5 @@ def hello_world():
                     <p><input type="submit" name="action" value="Process Query" /></p>
                 </form>
             </body>
-        </html>
-    '''.format(errors=errors)
-
-    #return 'shiny Flash app for ling472/anly521 final project!'
+        </html>'''
 

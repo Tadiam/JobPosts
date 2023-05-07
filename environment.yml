@@ -1,0 +1,22 @@
+name: jobposts_anly521
+channels:
+  - apple
+  - conda-forge
+dependencies:
+  - jupyterlab
+  - nltk
+  - numpy
+  - pytorch
+  - pyyaml
+  - pandas
+  - pip
+  - pytest
+  - python
+  - transformers
+  - sentence-transformers
+  - spacy
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - rake_nltk
+
