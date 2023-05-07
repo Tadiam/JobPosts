@@ -28,3 +28,10 @@ Running an exact job description to find the most relevant:
 To run our Pytests navigate to the test directory and run
 
 pytest tests.py
+
+# Website Interface
+
+We've made a user interface using pythonanywhere.com. To try out our model, navigate to anly521ling472aez.pythonanywhere.com. Enter in a description as described above, and you'll receive a list of sorted recommendations for jobs you should apply to! Happy job hunting!!
+
+
+
