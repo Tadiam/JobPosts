@@ -95,7 +95,9 @@ df = pd.read_csv("../../data/datascience.csv")
 model.df=df
 model.industry="Data Science"
 model.createJobList()
-model.trainModel()
+#model.trainModel()
+
+model.test()
 
 if(args.sentence=="default"):
     model.test()
