@@ -10,14 +10,18 @@ To run our model, there are two options:
 
 1. Run our train and test functions to see how our model works with our data. This will also run our evaluation feature and To do this, run our main.py file in this form:
 
-python3 main.py default
+python3 main.py --sentence "default"
 
 2. Run the train function and then have the model find job matches for you. This will not run the evaluations but will run the training function and test function to find you matches. To do this, run main.py in this form:
 
-python3 main.py "YOUR QUALIFIICATIOS AND EXPERIECES IN QUOTES"
+python3 main.py --sentence "YOUR QUALIFIICATIOS AND EXPERIECES IN QUOTES" --n "Number of results you wish to see (don't put in quotes)
+
+<img width="1146" alt="Screen Shot 2023-05-06 at 8 06 49 PM" src="https://user-images.githubusercontent.com/91433035/236651231-f0261b11-2e64-438b-95b6-715f92121878.png">
 
 NOTE: Depending on your machine, our model takes quite a long time to run all the way. In case you don't want to sit through iterations of using our model, we've included some data from our tests.
 
-
+Running an exact job description to find the most relevant:
 
 <img width="676" alt="Screen Shot 2023-05-06 at 7 36 06 PM" src="https://user-images.githubusercontent.com/91433035/236650492-034b84b9-c22b-4095-9343-329341a2258e.png">
+
+
