@@ -8,7 +8,7 @@ from rake_nltk import Rake
 import random
 import matplotlib.pyplot as plt
 import numpy as np
-
+import logging 
 from sklearn import metrics
 from sentence_transformers import SentenceTransformer,util
 
@@ -75,6 +75,7 @@ class Job_Model:
     def trainModel(self):        
         # Fine-tune BERT model on dataset of resumes and job descriptions
         #train_texts = ['Responsible for conceiving and creating technical content in a variety of media such as technical articles, white papers, blogs, videos, and eBooks.', 'Creating technical content and other media. Adept at writing papers, blogs, and online books',"chef who loves to bake and play football","a teacher who hates technology andd is passionate about bringing literature back to paper","marketer with decades of experience and loves the idea of bringing companies into the modern world with technical skills", "an artist who loves to write on paper, not adept with technology"]
+        logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.INFO)
         length=0
         texts_against=[]
         length=0
@@ -83,7 +84,7 @@ class Job_Model:
                 texts_against.append(u.description)
                 length+=1
         for subset in self.train_jobs:
-           print("H")
+           logging.info("New job position running, this might take a while.:Q")
            new_array = []
            for i in self.train_jobs:
                     for j in i:
