@@ -40,7 +40,7 @@ pytest tests.py
 
 One limitation of our project was the amount of data found through our job scraping process, and the amount that our individual laptops' CPU power could handle. Future projects could collect more job scrapings by automating a system scraping websites every day and building a larger database as a result. GPU services could run our model much faster than our computer systems could. This model could also be more useful for people across different job sectors. It could be fine-tuned on a variety of other job datasets.
 
-Another limitation we faced was in switching our local interface to a website host that could make our project widely available. Our website ran and trained our model, but we faced time limitations that prevented us from figuring out the SQL configuration to store our model as a database and do instantaneous comparisons. Unfortunately, our tool isn't available through a website interface like we were developing and like we had hoped for. 
+Another limitation we faced was in switching our local interface to a website host that could make our project widely available. Our website ran and trained our model, but we faced time limitations that prevented us from figuring out the SQL configuration to store our model as a database and do instantaneous comparisons. The development we've done thus far requires the model to run each time as a result. Unfortunately, our tool isn't available through a website interface like we were developing and like we had hoped for. 
 
 # Happy Job Hunting!
 
