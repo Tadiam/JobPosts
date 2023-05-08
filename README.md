@@ -1,4 +1,4 @@
-# JobPosts
+# JobPosts Python Package
 Authors: Adiam Tesfaselassie, Emily Smith, Zoë Moore
 
 Final Project for Computational Linguistics and Advanced Python
