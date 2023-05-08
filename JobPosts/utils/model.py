@@ -1,6 +1,4 @@
-
-
-from transformers import  BertTokenizer#,# AdamW
+from transformers import  BertTokenizer 
 from torch.utils.data import DataLoader, TensorDataset
 import pandas as pd
 import torch.nn.functional as F
@@ -22,30 +20,39 @@ sys.path.append(path2)
 from eval.eval import Evaluate
 
 class Job:
+    """Job Class represents a single job entity with its description, index, score, and industry"""
     def __init__(self,description,index,industry):
         self.description=description
         self.index=index
         self.score=0
-        self.paraphrase=""
         self.industry=industry
         
 class Job_Model:
+    """Job_Model contains a model trained on specific jobs, using BertTokenizer and SentenceTransformer models.
+        It contains a tokenizer, model, training and testing job list variables, and functions
+        for pre-processing, testing, and training a model.
+    """
     def __init__(self,  token='bert-base-nli-mean-tokens', ):
 
         self.model = SentenceTransformer(token)
         df=""
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        #self.train_df, self.test_df = train_test_split(self.jobs_df, test_size=.2)
         self.jobs=[]
         self.industry=""
         self.train_jobs=[]
         self.test_jobs=[]
         self.length=0
+
     def __str__(self):
+        """__str__ for Job_Model"""
         return f'Job Model for data set with path {self.path}'
+
     def __repr__(self):
+        """__repr__ for Job_Model"""
         return f'Job Model, path (\'{self.path}\''
+
     def createJobList(self):
+        """createJobList converts df into Job entities and stores them. Also calls seperate data"""
         count=0
         for x in self.df["Short Description"]:
             new_job=Job(description=x,index=count,industry=self.industry)
@@ -55,6 +62,7 @@ class Job_Model:
         self.length=len(self.jobs)
        
     def seperateData(self):
+        """seperateData creates training and testing lists of Job objects, with a 80/20 split"""
        
         current_industry=[self.jobs[x] for x in range(self.length-1,len(self.jobs))]
        
@@ -75,9 +83,8 @@ class Job_Model:
        
         self.test_jobs.append(this_industry_test)
        
-    def trainModel(self):        
-        # Fine-tune BERT model on dataset of resumes and job descriptions
-        #train_texts = ['Responsible for conceiving and creating technical content in a variety of media such as technical articles, white papers, blogs, videos, and eBooks.', 'Creating technical content and other media. Adept at writing papers, blogs, and online books',"chef who loves to bake and play football","a teacher who hates technology andd is passionate about bringing literature back to paper","marketer with decades of experience and loves the idea of bringing companies into the modern world with technical skills", "an artist who loves to write on paper, not adept with technology"]
+    def trainModel(self):    
+        """trainModel fine-tunes BERT model on dataset of resumes and job descriptions"""    
         logging.basicConfig(filename='train.log', encoding='utf-8', level=logging.INFO)
         length=0
         texts_against=[]
@@ -87,7 +94,6 @@ class Job_Model:
                 texts_against.append(u.description)
                 length+=1
         for subset in self.train_jobs:
-          # logging.info("New job position running, this might take a while.:Q")
            new_array = []
            for i in self.train_jobs:
                     for j in i:
@@ -98,18 +104,12 @@ class Job_Model:
            train_labels = new_array
            label_tensor=torch.tensor(train_labels)
            for x in subset:
-             
                
                 train_texts = [x.description for l in range(length)]
-                
-               
-             
                 train_encodings = self.model.encode((train_texts))
                 train_set_encoding=self.model.encode(texts_against)
                 
-                
                 train_dataset = TensorDataset(torch.tensor(train_encodings), torch.tensor(train_set_encoding), label_tensor)
-
 
                 train_dataloader = DataLoader(train_dataset, batch_size=10)
 
@@ -129,8 +129,6 @@ class Job_Model:
 
                         label=label.float()
                         label.requires_grad = True
-                           
-                     
                         cosine_similarities = cosine_similarity(train_embeddings.detach().cpu().numpy(), texts_against_embeddings.detach().cpu().numpy())
                         
                         cosine_similarities = torch.from_numpy(cosine_similarities)
@@ -141,37 +139,19 @@ class Job_Model:
                         
                         optimizer.step()
                 
-    
     def findClosestMatch(self,text):
-        #trainModel(model,df)
-        
-        # test_texts = []
-        # for i in self.test_df['Short Description']:
-        #     paraphrase(i)
-        #this is paraphrasing the original description to search for this job 
-        #vector1=self.model.encode(test_texts)
-        
-        # for x in self.jobs:
-        #     new=x.paraphrase(x.description)
-        #     x.paraphrase=new
+        """findClosestMatch compares a given string to stored embeddings, and
+        then sorts the jobs in ranked order according to their similarity scores """
         
         cos_sim = util.pytorch_cos_sim
 
         sent1_embedding = self.model.encode(text, convert_to_tensor=True)
-        
 
-      
-       
-       
-
-        # compute cosine similarity between the embeddings
-        
+        logging.info("compute cosine similarity between the embeddings")
         
         count=0
         
         for x in self.jobs:
-          
-           
             sent2_embedding = self.model.encode(x.description, convert_to_tensor=True)
             
             score = cos_sim(sent1_embedding, sent2_embedding)
@@ -179,8 +159,9 @@ class Job_Model:
             count+=1
         
         self.jobs.sort(key=lambda x:x.score ,reverse=True)
+
     def test(self):
-        #logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.INFO)
+        """test performs the testing for the model, calling Evaluate to perform the evaluation."""
         logging.info("Testing beginning ")
         average_prec=0
         average_recall=0

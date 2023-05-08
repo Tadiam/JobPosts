@@ -1,3 +1,12 @@
+""" main.py processes user input, comparing it to our model of job description data.
+    
+    main.py creates a new model based on the data files stored in the data folder. 
+    It calls functions in the model module which train and test the model.
+    It also parses input, taking in a string description of the user's qualifications and experiences,
+    comparing it to the jobs stored in the model, and then printing out the
+    jobs the user should apply to in ranked order based on similarity score.
+
+"""
 import sys
 import os
 import pandas as pd

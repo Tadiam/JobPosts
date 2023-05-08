@@ -1,3 +1,4 @@
+"""tests.py tests crucial aspects of our project: closestmatch and evaluation metrics, on the bussinessanalyst data"""
 import sys
 import os
 import pandas as pd
@@ -21,6 +22,9 @@ model.createJobList()
 
 
 def test_top_match():
+    """calls functionality implemented by model's Job_Model class to find the closest match.
+        Then, it asserts that this is the best match.
+    """
     toFind=model.jobs[0].description
     model.findClosestMatch(model.jobs[0].description)
     assert(model.jobs[0].description==toFind)
@@ -30,6 +34,7 @@ def test_top_match():
     assert(model.jobs[1].description==toFind)
 
 def test_Precision():
+    """Calls Evaluate's precision and then asserts that it is true to test that method"""
     preds=[1 for x in range (40)]
     real=[1 for x in range(40)]
     e=Evaluate(preds)
@@ -37,12 +42,16 @@ def test_Precision():
     assert(e.precision()==1)
    
 def test_recall():
+    """Calls Evaluate's recall and then asserts that it is true to test that method"""
+
     preds=[1 for x in range (40)]
     real=[1 for x in range(40)]
     e=Evaluate(preds)
     e.real=real
     assert(e.recall()==1)
+
 def test_f1():
+    """Calls Evaluate's f1 and then asserts that it is true to test that method"""
     preds=[1 for x in range (40)]
     real=[1 for x in range(40)]
     e=Evaluate(preds)
