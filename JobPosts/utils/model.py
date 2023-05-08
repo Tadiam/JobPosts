@@ -66,7 +66,6 @@ class Job_Model:
        
         current_industry=[self.jobs[x] for x in range(self.length-1,len(self.jobs))]
        
-       
         this_industry_train=[]
         this_industry_test=[]
         stopper=len(current_industry)*.8
@@ -107,7 +106,7 @@ class Job_Model:
                
                 train_texts = [x.description for l in range(length)]
                 train_encodings = self.model.encode((train_texts))
-                train_set_encoding=self.model.encode(texts_against)
+                train_set_encoding = self.model.encode(texts_against)
                 
                 train_dataset = TensorDataset(torch.tensor(train_encodings), torch.tensor(train_set_encoding), label_tensor)
 
@@ -116,6 +115,7 @@ class Job_Model:
                 optimizer = torch.optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9)
 
                 self.model.train()
+                
                 for num in range(1):
                 
                     for batch in train_dataloader:

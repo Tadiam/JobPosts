@@ -68,15 +68,6 @@ our_model.industry="Data Science"
 our_model.createJobList()
 our_model.trainModel()
 
-our_model.test()
-
 def get_our_model():
     return our_model
-
-#if(args.sentence=="default"):
-#    our_model.test()
-#else:
-#    (our_model.findClosestMatch(args.sentence))
-#    for x in range(0,args.n):
-#        print(our_model.jobs[x].industry,our_model.jobs[x].description)
 
