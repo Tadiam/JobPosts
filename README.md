@@ -1,5 +1,5 @@
 # JobPosts
-Authors: Adiam Tesfaselassie, Emily Smith, 
+Authors: Adiam Tesfaselassie, Emily Smith, Zoë Moore
 
 Final Project for Computational Linguistics and Advanced Python
 
