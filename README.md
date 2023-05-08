@@ -42,7 +42,7 @@ One limitation of our project was the amount of data found through our job scrap
 
 Another limitation we faced was in switching our local interface to a website host that could make our project widely available. Our website ran and trained our model, but we faced time limitations that prevented us from figuring out the SQL configuration to store our model as a database and do instantaneous comparisons. Unfortunately, our tool isn't available through a website interface like we were developing and like we had hoped for. 
 
-#Happy Job Hunting!
+# Happy Job Hunting!
 
 
 
